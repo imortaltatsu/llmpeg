@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llmpeg"
+version = "0.1.0"
+description = "LLM-powered FFmpeg command assistant"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.0.0",
+    "pydantic>=2.12.4",
+    "rich>=14.2.0",
+    "typer>=0.20.0",
+]
+[project.urls]
+Homepage = "https://github.com/imortaltatsu/llmpeg"
+Repository = "https://github.com/imortaltatsu/llmpeg"
+Issues = "https://github.com/imortaltatsu/llmpeg/issues"
+
+[project.scripts]
+llmpeg = "llmpeg.cli:main"
