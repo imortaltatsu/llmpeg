@@ -7,6 +7,7 @@ name = "llmpeg"
 version = "0.1.0"
 description = "LLM-powered FFmpeg command assistant"
 readme = "README.md"
+license = {text = "MIT"}
 requires-python = ">=3.12"
 dependencies = [
     "openai>=1.0.0",
