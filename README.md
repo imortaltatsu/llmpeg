@@ -2,7 +2,8 @@
 
 LLM-powered FFmpeg command assistant that converts natural language instructions into `ffmpeg` commands.
 
-**Repository:** [https://github.com/imortaltatsu/llmpeg](https://github.com/imortaltatsu/llmpeg)
+**Repository:** [https://github.com/imortaltatsu/llmpeg](https://github.com/imortaltatsu/llmpeg)  
+**PyPI Package:** [https://pypi.org/project/llmpeg/](https://pypi.org/project/llmpeg/)
 
 ### Features
 - Conversational interface that converts natural language instructions into `ffmpeg` commands
@@ -13,11 +14,33 @@ LLM-powered FFmpeg command assistant that converts natural language instructions
 
 ### Installation
 
+#### From PyPI (Recommended)
+
+**Using pip:**
+```bash
+pip install llmpeg
+```
+
+**Using pipx** (isolated installation, recommended for CLI tools):
+```bash
+pipx install llmpeg
+```
+
+**Using uv:**
+```bash
+uv pip install llmpeg
+```
+
 #### From Git Repository
 
 **Using pip:**
 ```bash
 pip install git+https://github.com/imortaltatsu/llmpeg.git
+```
+
+**Using pipx:**
+```bash
+pipx install git+https://github.com/imortaltatsu/llmpeg.git
 ```
 
 **Using uv:**

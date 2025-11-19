@@ -9,6 +9,21 @@ description = "LLM-powered FFmpeg command assistant"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.12"
+authors = [
+    {name = "imortaltatsu"}
+]
+keywords = ["ffmpeg", "llm", "ai", "video", "audio", "conversion", "compression"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Video",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Utilities",
+]
 dependencies = [
     "openai>=1.0.0",
     "pydantic>=2.12.4",
