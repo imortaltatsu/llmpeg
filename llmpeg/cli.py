@@ -5,6 +5,8 @@ Typer CLI entrypoint for the llmpeg assistant.
 from __future__ import annotations
 
 import os
+import shutil
+import subprocess
 from pathlib import Path
 from typing import Optional
 
@@ -19,6 +21,49 @@ app = typer.Typer(help="LLM-powered FFmpeg command assistant.", add_completion=F
 # Import setup commands
 from . import setup as setup_module
 app.add_typer(setup_module.app, name="setup")
+
+
+def _check_ffmpeg() -> bool:
+    """Check if ffmpeg is installed and available."""
+    ffmpeg_path = shutil.which("ffmpeg")
+    if ffmpeg_path is None:
+        return False
+    
+    # Verify ffmpeg works by checking version
+    try:
+        result = subprocess.run(
+            ["ffmpeg", "-version"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        return result.returncode == 0
+    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
+        return False
+
+
+def _check_config() -> bool:
+    """Check if config is initialized."""
+    config_py = Path.home() / ".llmpeg" / "config.py"
+    config_json = Path.home() / ".llmpeg" / "config.json"
+    
+    # Check if either config file exists
+    if config_py.exists() or config_json.exists():
+        return True
+    
+    # Also check if API key is set via environment variables
+    env_api_key = os.getenv("LLMPEG_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+    env_provider = os.getenv("LLMPEG_PROVIDER")
+    
+    # If provider is ollama, config might not be needed (no API key required)
+    if env_provider == "ollama":
+        return True
+    
+    # If API key is set via env, consider config initialized
+    if env_api_key:
+        return True
+    
+    return False
 
 
 def _build_executor(options: CLIOptions) -> FFmpegExecutor:
@@ -40,6 +85,69 @@ def _main_callback(
     # If a subcommand was invoked, don't run the main callback
     if ctx.invoked_subcommand is not None:
         return
+    
+    # Check FFmpeg installation
+    if not _check_ffmpeg():
+        typer.secho(
+            "❌ FFmpeg is not installed or not available in PATH.",
+            fg=typer.colors.RED,
+            err=True,
+        )
+        typer.secho(
+            "\nPlease install FFmpeg:",
+            fg=typer.colors.YELLOW,
+            err=True,
+        )
+        typer.secho(
+            "  • macOS: brew install ffmpeg",
+            fg=typer.colors.YELLOW,
+            err=True,
+        )
+        typer.secho(
+            "  • Ubuntu/Debian: sudo apt-get install ffmpeg",
+            fg=typer.colors.YELLOW,
+            err=True,
+        )
+        typer.secho(
+            "  • Windows: Download from https://ffmpeg.org/download.html",
+            fg=typer.colors.YELLOW,
+            err=True,
+        )
+        typer.secho(
+            "\nAfter installing, verify with: ffmpeg -version",
+            fg=typer.colors.YELLOW,
+            err=True,
+        )
+        raise typer.Exit(code=1)
+    
+    # Check config initialization
+    if not _check_config():
+        typer.secho(
+            "⚠️  Configuration not initialized.",
+            fg=typer.colors.YELLOW,
+            err=True,
+        )
+        typer.secho(
+            "\nPlease run: llmpeg setup init",
+            fg=typer.colors.YELLOW,
+            err=True,
+        )
+        typer.secho(
+            "\nOr set environment variables:",
+            fg=typer.colors.YELLOW,
+            err=True,
+        )
+        typer.secho(
+            "  export LLMPEG_PROVIDER=openrouter",
+            fg=typer.colors.YELLOW,
+            err=True,
+        )
+        typer.secho(
+            "  export LLMPEG_API_KEY=your-api-key",
+            fg=typer.colors.YELLOW,
+            err=True,
+        )
+        raise typer.Exit(code=1)
     
     # Try to load config from Python config.py file first (static path)
     config_py_file = Path.home() / ".llmpeg" / "config.py"
